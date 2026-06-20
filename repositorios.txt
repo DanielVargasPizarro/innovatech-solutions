@@ -1,0 +1,64 @@
+=========================================================
+  INNOVATECH SOLUTIONS — REPOSITORIOS GITHUB
+  DSY1106 · Desarrollo Fullstack III · Parcial N°3
+=========================================================
+
+IMPORTANTE: Actualiza las URLs con tus repositorios reales antes de entregar.
+
+---------------------------------------------------------
+1. REPOSITORIO PRINCIPAL (Documentación general)
+---------------------------------------------------------
+URL:      https://github.com/TU_USUARIO/innovatech-solutions
+Rama:     main
+Propósito: Contiene el docker-compose.yml, documentación
+           general del proyecto, diagramas de arquitectura,
+           y guías de instalación del sistema completo.
+
+---------------------------------------------------------
+2. REPOSITORIO FRONTEND
+---------------------------------------------------------
+URL:      https://github.com/TU_USUARIO/innovatech-frontend
+Rama:     main
+Propósito: Aplicación React + Vite con las páginas de
+           Dashboard, Proyectos, Recursos y Login.
+           Incluye README con instrucciones de instalación
+           y ejecución.
+
+---------------------------------------------------------
+3. REPOSITORIO ms-proyectos
+---------------------------------------------------------
+URL:      https://github.com/TU_USUARIO/innovatech-ms-proyectos
+Rama:     main
+Propósito: Microservicio de gestión de proyectos y tareas.
+           Express + Prisma + PostgreSQL.
+           Implementa Repository Pattern.
+           Incluye 34 tests unitarios con 100% de cobertura.
+
+---------------------------------------------------------
+4. REPOSITORIO ms-recursos
+---------------------------------------------------------
+URL:      https://github.com/TU_USUARIO/innovatech-ms-recursos
+Rama:     main
+Propósito: Microservicio de gestión de empleados y
+           asignaciones. Express + Prisma + PostgreSQL.
+           Incluye 15 tests unitarios.
+
+---------------------------------------------------------
+5. REPOSITORIO ms-analitica
+---------------------------------------------------------
+URL:      https://github.com/TU_USUARIO/innovatech-ms-analitica
+Rama:     main
+Propósito: Microservicio de KPIs y analítica.
+           Agrega datos de ms-proyectos y ms-recursos
+           en tiempo real. Guarda snapshots históricos.
+
+---------------------------------------------------------
+6. REPOSITORIO api-gateway
+---------------------------------------------------------
+URL:      https://github.com/TU_USUARIO/innovatech-api-gateway
+Rama:     main
+Propósito: BFF (Backend for Frontend). Maneja autenticación
+           JWT, enrutamiento a microservicios y Circuit
+           Breaker para resiliencia.
+
+=========================================================

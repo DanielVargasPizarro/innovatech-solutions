@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # ─── Bases de datos ───────────────────────────────────────
+  db-proyectos:
+    image: postgres:15
+    container_name: db-proyectos
+    environment:
+      POSTGRES_DB: proyectos_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-proyectos-data:/var/lib/postgresql/data
+
+  db-recursos:
+    image: postgres:15
+    container_name: db-recursos
+    environment:
+      POSTGRES_DB: recursos_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-recursos-data:/var/lib/postgresql/data
+
+  db-analitica:
+    image: postgres:15
+    container_name: db-analitica
+    environment:
+      POSTGRES_DB: analitica_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5434:5432"
+    volumes:
+      - db-analitica-data:/var/lib/postgresql/data
+
+  # ─── Microservicios ───────────────────────────────────────
+  ms-proyectos:
+    build: ./services/ms-proyectos
+    container_name: ms-proyectos
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./services/ms-proyectos/.env
+    depends_on:
+      - db-proyectos
+
+  ms-recursos:
+    build: ./services/ms-recursos
+    container_name: ms-recursos
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./services/ms-recursos/.env
+    depends_on:
+      - db-recursos
+
+  ms-analitica:
+    build: ./services/ms-analitica
+    container_name: ms-analitica
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./services/ms-analitica/.env
+    depends_on:
+      - db-analitica
+
+  # ─── API Gateway ──────────────────────────────────────────
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./services/api-gateway/.env
+    depends_on:
+      - ms-proyectos
+      - ms-recursos
+      - ms-analitica
+
+  # ─── Frontend ─────────────────────────────────────────────
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+
+volumes:
+  db-proyectos-data:
+  db-recursos-data:
+  db-analitica-data:

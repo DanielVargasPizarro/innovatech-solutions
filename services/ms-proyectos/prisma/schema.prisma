@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Proyecto {
+  id          Int              @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  estado      Estado           @default(EN_PROCESO)
+  fechaInicio DateTime         @default(now())
+  fechaFin    DateTime?
+  presupuesto Float?
+  costoActual Float?
+  cliente     String?
+  tareas      Tarea[]
+  metricas    MetricaMensual[]
+  hitos       Hito[]
+  riesgos     Riesgo[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Tarea {
+  id            Int      @id @default(autoincrement())
+  titulo        String
+  descripcion   String?
+  estado        Estado   @default(EN_PROCESO)
+  responsableId Int?
+  proyectoId    Int
+  proyecto      Proyecto @relation(fields: [proyectoId], references: [id])
+  categoria     String?
+  prioridad     String?
+  horasEst      Int?
+  horasReal     Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model MetricaMensual {
+  id                Int      @id @default(autoincrement())
+  proyectoId        Int
+  proyecto          Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  periodo           String
+  tareasCompletadas Int      @default(0)
+  horasRegistradas  Float    @default(0)
+  incidencias       Int      @default(0)
+  costoMes          Float    @default(0)
+  createdAt         DateTime @default(now())
+}
+
+model Hito {
+  id          Int       @id @default(autoincrement())
+  proyectoId  Int
+  proyecto    Proyecto  @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  nombre      String
+  fechaPlan   DateTime
+  fechaReal   DateTime?
+  completado  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+}
+
+model Riesgo {
+  id          Int      @id @default(autoincrement())
+  proyectoId  Int
+  proyecto    Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  descripcion String
+  nivel       String
+  mitigado    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+enum Estado {
+  PENDIENTE
+  EN_PROCESO
+  COMPLETADO
+  CANCELADO
+}

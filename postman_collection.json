@@ -1,0 +1,271 @@
+{
+  "info": {
+    "_postman_id": "innovatech-microservicios-v1",
+    "name": "Innovatech Solutions — API REST",
+    "description": "Colección completa de endpoints para la plataforma Innovatech Solutions.\n\n**Flujo de autenticación:**\n1. Ejecutar POST /auth/login\n2. El script de test guarda el token automáticamente en la variable `jwt_token`\n3. Las demás peticiones usan ese token automáticamente\n\n**Servicios:**\n- API Gateway: http://localhost:3000\n- ms-proyectos: http://localhost:3001 (acceso directo)\n- ms-recursos: http://localhost:3002 (acceso directo)\n- ms-analitica: http://localhost:3003 (acceso directo)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",  "value": "http://localhost:3000", "type": "string" },
+    { "key": "jwt_token", "value": "",                      "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{jwt_token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "0. Autenticación",
+      "item": [
+        {
+          "name": "Login — Admin",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const json = pm.response.json();",
+                "if (json.token) {",
+                "  pm.collectionVariables.set('jwt_token', json.token);",
+                "  pm.test('Token guardado correctamente', () => pm.expect(json.token).to.be.a('string'));",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@innovatech.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] }
+          }
+        },
+        {
+          "name": "Login — Gestor",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"gestor@innovatech.com\",\n  \"password\": \"gestor123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] }
+          }
+        },
+        {
+          "name": "Login — Credenciales inválidas (400)",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"hacker@evil.com\",\n  \"password\": \"wrong\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Proyectos",
+      "item": [
+        {
+          "name": "GET todos los proyectos",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/proyectos/proyectos", "host": ["{{base_url}}"], "path": ["proyectos","proyectos"] }
+          }
+        },
+        {
+          "name": "GET proyecto por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/proyectos/proyectos/1", "host": ["{{base_url}}"], "path": ["proyectos","proyectos","1"] }
+          }
+        },
+        {
+          "name": "POST crear proyecto",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sistema de Inventario\",\n  \"descripcion\": \"Desarrollo de módulo de inventario para cliente retail\",\n  \"estado\": \"EN_PROCESO\",\n  \"fechaFin\": \"2025-12-31T00:00:00.000Z\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/proyectos/proyectos", "host": ["{{base_url}}"], "path": ["proyectos","proyectos"] }
+          }
+        },
+        {
+          "name": "PUT actualizar proyecto",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sistema de Inventario v2\",\n  \"estado\": \"COMPLETADO\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/proyectos/proyectos/1", "host": ["{{base_url}}"], "path": ["proyectos","proyectos","1"] }
+          }
+        },
+        {
+          "name": "DELETE eliminar proyecto",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/proyectos/proyectos/1", "host": ["{{base_url}}"], "path": ["proyectos","proyectos","1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Tareas",
+      "item": [
+        {
+          "name": "GET tareas de un proyecto",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/proyectos/proyectos/1/tareas", "host": ["{{base_url}}"], "path": ["proyectos","proyectos","1","tareas"] }
+          }
+        },
+        {
+          "name": "POST crear tarea en proyecto",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Diseñar base de datos\",\n  \"descripcion\": \"Crear esquema ER y migraciones iniciales\",\n  \"estado\": \"PENDIENTE\",\n  \"responsableId\": 2\n}"
+            },
+            "url": { "raw": "{{base_url}}/proyectos/proyectos/1/tareas", "host": ["{{base_url}}"], "path": ["proyectos","proyectos","1","tareas"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Empleados",
+      "item": [
+        {
+          "name": "GET todos los empleados",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/recursos/empleados", "host": ["{{base_url}}"], "path": ["recursos","empleados"] }
+          }
+        },
+        {
+          "name": "GET empleado por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/recursos/empleados/1", "host": ["{{base_url}}"], "path": ["recursos","empleados","1"] }
+          }
+        },
+        {
+          "name": "POST crear empleado",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Valentina Torres\",\n  \"email\": \"valentina@innovatech.com\",\n  \"cargo\": \"Desarrolladora Full Stack\",\n  \"habilidades\": [\"React\", \"Node.js\", \"PostgreSQL\", \"Docker\"],\n  \"disponible\": true,\n  \"horasSemana\": 40\n}"
+            },
+            "url": { "raw": "{{base_url}}/recursos/empleados", "host": ["{{base_url}}"], "path": ["recursos","empleados"] }
+          }
+        },
+        {
+          "name": "PUT actualizar empleado",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disponible\": false,\n  \"horasSemana\": 32\n}"
+            },
+            "url": { "raw": "{{base_url}}/recursos/empleados/1", "host": ["{{base_url}}"], "path": ["recursos","empleados","1"] }
+          }
+        },
+        {
+          "name": "DELETE eliminar empleado (con cascada)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/recursos/empleados/1", "host": ["{{base_url}}"], "path": ["recursos","empleados","1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Asignaciones",
+      "item": [
+        {
+          "name": "POST crear asignación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"empleadoId\": 1,\n  \"proyectoId\": 2,\n  \"horasAsig\": 20,\n  \"fechaFin\": \"2025-06-30T00:00:00.000Z\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/recursos/asignaciones", "host": ["{{base_url}}"], "path": ["recursos","asignaciones"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Analítica (KPIs)",
+      "item": [
+        {
+          "name": "GET KPIs en tiempo real",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/analitica/kpis", "host": ["{{base_url}}"], "path": ["analitica","kpis"] }
+          }
+        },
+        {
+          "name": "GET historial de KPIs (últimos 30)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/analitica/kpis/historial", "host": ["{{base_url}}"], "path": ["analitica","kpis","historial"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Health Checks",
+      "item": [
+        {
+          "name": "Health — API Gateway",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "noauth" },
+            "url": { "raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"] }
+          }
+        },
+        {
+          "name": "Health — ms-proyectos (directo)",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "noauth" },
+            "url": { "raw": "http://localhost:3001/health", "raw": "http://localhost:3001/health" }
+          }
+        },
+        {
+          "name": "Health — ms-recursos (directo)",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "noauth" },
+            "url": { "raw": "http://localhost:3002/health", "raw": "http://localhost:3002/health" }
+          }
+        },
+        {
+          "name": "Health — ms-analitica (directo)",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "noauth" },
+            "url": { "raw": "http://localhost:3003/health", "raw": "http://localhost:3003/health" }
+          }
+        }
+      ]
+    }
+  ]
+}

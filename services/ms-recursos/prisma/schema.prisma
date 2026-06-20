@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Empleado {
+  id           Int           @id @default(autoincrement())
+  nombre       String
+  email        String        @unique
+  cargo        String
+  habilidades  String[]
+  disponible   Boolean       @default(true)
+  horasSemana  Int           @default(40)
+  asignaciones Asignacion[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Asignacion {
+  id          Int      @id @default(autoincrement())
+  empleadoId  Int
+  empleado    Empleado @relation(fields: [empleadoId], references: [id])
+  proyectoId  Int      // ID externo del ms-proyectos
+  horasAsig   Int
+  fechaInicio DateTime @default(now())
+  fechaFin    DateTime?
+  createdAt   DateTime @default(now())
+}

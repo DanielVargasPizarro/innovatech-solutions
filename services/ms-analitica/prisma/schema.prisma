@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ms-analitica guarda snapshots de KPIs calculados
+model KpiSnapshot {
+  id               Int      @id @default(autoincrement())
+  fecha            DateTime @default(now())
+  totalProyectos   Int
+  proyectosActivos Int
+  tareasCompletadas Int
+  tasaUtilizacion  Float    // % empleados asignados
+  createdAt        DateTime @default(now())
+}
